@@ -1,32 +1,36 @@
 const express = require('express');
 const app = express();
-const tedious = require('tedious');
+const sql = require('mssql/msnodesqlv8');
 
 // Configuración de la conexión a la base de datos
 const config = {
-    server: 'C-A-M-A-Y-2001.database.windows.net',
-    authentication: {
-        type: 'default',
-        options: {
-            userName: '',
-            password: '',
-        },
-    },
+    database: 'testdevback',
+    server: 'C-A-M-A-Y-2001',
+    driver: 'msnodesqlv8',
     options: {
-        database: 'testdevback',
-        encrypt: true,
-    },
+        trustedConnection: true
+    }
 };
 
-const connection = new tedious.Connection(config);
-
-connection.on('connect', (err) => {
+//connect to your database
+sql.connect(config, function (err) {
     if (err) {
-        console.error('Error de conexión a la base de datos:', err);
-    } else {
-        console.log('Conexión a la base de datos exitosa');
+        console.log(err);
+    }else{
+        console.log("Conexión exitosa");
     }
+    
 });
+
+//Get principal
+app.get('/', (req, res, next) => {
+    res.send('Pagina Principal Api Clase')
+    //res.json({message: 'Hello World'})
+})
+
+
+//Familia de rutas
+app.use(require('./routes/routes'))
 
 app.listen(3000, () => {
     console.log('API en ejecución en el puerto 3000');
